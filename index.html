@@ -231,6 +231,18 @@
       margin-bottom: 8px;
     }
 
+    .firmware-notes {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .firmware-notes p {
+      margin: 0;
+    }
+
     .notice {
       border-left: 4px solid var(--blue);
       background: rgba(36, 200, 255, 0.08);
@@ -331,6 +343,10 @@
           <div id="status" class="status">Ready.</div>
         </div>
       </div>
+      <div class="firmware-notes">
+        <p class="section-tag">SELECTED FIRMWARE</p>
+        <p id="firmware-description">Select a firmware version to view its notes.</p>
+      </div>
     </section>
   </div>
 
@@ -341,6 +357,9 @@
     const refreshBtn = document.getElementById('refresh-btn');
     const flashBtn = document.getElementById('flash-btn');
     const statusEl = document.getElementById('status');
+    const firmwareDescriptionEl = document.getElementById('firmware-description');
+
+    let firmwareManifest = { versions: [] };
 
     const DFU_DEVICE_FILTERS = [
       { vendorId: 0x0483 }
@@ -395,13 +414,25 @@
       return `${mode}: [${vid}:${pid}] cfg=${cfg}, intf=${intf}, alt=${alt}, name="${name}"`;
     }
 
+    function updateFirmwareDescription() {
+      const filename = firmwareSelect.value;
+      const selected = firmwareManifest.versions.find(item => item.file === filename);
+      if (!selected) {
+        firmwareDescriptionEl.textContent = 'Select a firmware version to view its notes.';
+        return;
+      }
+      firmwareDescriptionEl.textContent = selected.description || 'No description provided for this firmware version.';
+    }
+
     async function loadFirmwareManifest() {
       const res = await fetch('./manifest.json', { cache: 'no-store' });
       if (!res.ok) throw new Error(`Manifest fetch failed: ${res.status}`);
       const manifest = await res.json();
+      firmwareManifest = manifest;
       firmwareSelect.innerHTML = '';
       if (!manifest.versions || !manifest.versions.length) {
         firmwareSelect.innerHTML = '<option value="">No firmware versions available</option>';
+        firmwareDescriptionEl.textContent = 'No firmware versions available.';
         setStatus('No firmware versions found in manifest.json');
         return manifest;
       }
@@ -411,6 +442,7 @@
         opt.textContent = item.label;
         firmwareSelect.appendChild(opt);
       }
+      updateFirmwareDescription();
       setStatus(`Loaded ${manifest.versions.length} firmware version(s).`);
       return manifest;
     }
@@ -569,6 +601,10 @@
 
     refreshBtn.addEventListener('click', () => {
       loadFirmwareManifest().catch(err => setStatus(`Error loading manifest: ${err.message}`));
+    });
+
+    firmwareSelect.addEventListener('change', () => {
+      updateFirmwareDescription();
     });
 
     flashBtn.addEventListener('click', () => {
