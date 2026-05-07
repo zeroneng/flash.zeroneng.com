@@ -598,10 +598,6 @@
       }
     }
 
-    refreshBtn.addEventListener('click', () => {
-      loadFirmwareManifest().catch(err => setStatus(`Error loading manifest: ${err.message}`));
-    });
-
     firmwareSelect.addEventListener('change', () => {
       updateFirmwareDescription();
     });
