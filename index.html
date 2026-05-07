@@ -155,6 +155,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      height: 52px;
       min-height: 52px;
       padding: 0 22px;
       border-radius: 999px;
@@ -163,7 +164,10 @@
       cursor: pointer;
       font: inherit;
       font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
       color: #fff;
+      flex: 0 0 auto;
     }
 
     .button-primary {
@@ -279,22 +283,7 @@
     <section class="hero">
       <div>
         <p class="eyebrow">RHYTHM • FIRMWARE UPDATE</p>
-        <h1>Flash new firmware from your browser.</h1>
-        <p>
-          This page is intended to make RHYTHM firmware updates simple. Choose a firmware version, connect the device,
-          and flash it through the external USB DFU path.
-        </p>
-        <div class="notice">
-          This version now uses the real Daisy JavaScript DFU stack, adapted for RHYTHM firmware binaries.
-        </div>
-      </div>
-      <div class="content-section">
-        <p class="section-tag">STATUS</p>
-        <h2>Browser-based updater</h2>
-        <p>
-          Hosted as a static site. Intended to work from GitHub Pages. Uses browser USB access and Daisy's DFU/DfuSe
-          JavaScript stack for firmware-only updates.
-        </p>
+        <h1>Firmware Updater</h1>
       </div>
     </section>
 
@@ -304,8 +293,8 @@
       <div class="grid-2">
         <div>
           <ol class="list-tight">
-            <li>Connect RHYTHM to your computer using the external USB port.</li>
-            <li>Put RHYTHM into the external USB DFU bootloader mode.</li>
+            <li>Connect RHYTHM to your computer using the USB port.</li>
+            <li>Put RHYTHM into Flash Mode in the Settings menu.</li>
             <li>Select the firmware version you want to install.</li>
             <li>Click <strong>Flash Firmware</strong>.</li>
             <li>Approve the browser USB device prompt if it appears.</li>
@@ -319,9 +308,6 @@
             <li>Only flash firmware files intended for RHYTHM.</li>
             <li>If flashing fails, power-cycle the device and retry.</li>
           </ul>
-          <div class="notice">
-            This page assumes RHYTHM presents the same DFU USB identity and write behavior as Daisy Seed.
-          </div>
         </div>
       </div>
     </section>
@@ -338,7 +324,6 @@
             </select>
           </div>
           <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <button id="refresh-btn" class="button button-blue" type="button">Refresh Versions</button>
             <button id="flash-btn" class="button button-primary" type="button">Flash Firmware</button>
           </div>
         </div>
