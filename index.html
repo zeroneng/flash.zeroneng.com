@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RHYTHM Firmware Flash</title>
+  <meta name="description" content="Flash RHYTHM firmware from your browser.">
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-soft: #0b0b10;
+      --panel: rgba(255, 255, 255, 0.04);
+      --panel-strong: rgba(255, 255, 255, 0.07);
+      --text: #f5f7fb;
+      --copy: rgba(255, 255, 255, 0.9);
+      --line: rgba(255, 255, 255, 0.1);
+      --pink: #ff2ea6;
+      --blue: #24c8ff;
+      --shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+      --bg-gradient:
+        radial-gradient(circle at 10% 0%, rgba(36, 200, 255, 0.14), transparent 30%),
+        radial-gradient(circle at 100% 0%, rgba(255, 46, 166, 0.14), transparent 28%),
+        linear-gradient(180deg, #08080a 0%, #040404 100%);
+      --topbar-bg: rgba(5, 5, 5, 0.7);
+      --card-bg: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.025));
+      --card-soft-bg: rgba(255, 255, 255, 0.03);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .site-shell {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding-bottom: 48px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      padding: 20px 0;
+      backdrop-filter: blur(18px);
+      background: var(--topbar-bg);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink), var(--blue));
+      box-shadow: 0 0 18px rgba(36, 200, 255, 0.6);
+    }
+
+    .brand-mark {
+      font-weight: 900;
+      letter-spacing: 0.34em;
+      font-size: 0.98rem;
+    }
+
+    .topnav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .topnav a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      gap: 40px;
+      align-items: center;
+      min-height: 20vh;
+      padding: 24px 0 24px;
+    }
+
+    .eyebrow, .section-tag {
+      margin: 0 0 16px;
+      color: var(--blue);
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.05;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5.4rem);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      margin-bottom: 14px;
+    }
+
+    p, li {
+      color: var(--copy);
+      line-height: 1.75;
+    }
+
+    .content-section {
+      margin-top: 28px;
+      padding: 32px;
+      background: var(--card-bg);
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 22px;
+      border-radius: 999px;
+      text-decoration: none;
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .button-primary {
+      background: linear-gradient(135deg, var(--pink), #ff68be);
+      box-shadow: 0 20px 44px rgba(255, 46, 166, 0.28);
+    }
+
+    .button-blue {
+      background: linear-gradient(135deg, var(--blue), #1473ff);
+      box-shadow: 0 20px 44px rgba(36, 200, 255, 0.28);
+    }
+
+    .controls {
+      display: grid;
+      gap: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    select {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--card-soft-bg);
+      color: var(--text);
+      padding: 0 14px;
+      font: inherit;
+    }
+
+    .status {
+      white-space: pre-wrap;
+      background: rgba(0,0,0,0.28);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 220px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.95rem;
+      color: #fff;
+      overflow-wrap: anywhere;
+    }
+
+    .status p {
+      margin: 0 0 8px;
+      color: #fff;
+      line-height: 1.45;
+    }
+
+    .status progress {
+      width: 100%;
+      height: 18px;
+      margin-top: 10px;
+    }
+
+    .list-tight li {
+      margin-bottom: 8px;
+    }
+
+    .notice {
+      border-left: 4px solid var(--blue);
+      background: rgba(36, 200, 255, 0.08);
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 960px) {
+      .hero, .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site-shell, .topbar-inner {
+        width: min(100% - 24px, 1120px);
+      }
+
+      .content-section {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: clamp(2.4rem, 12vw, 4rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-lockup" href="https://zeroneng.com">
+        <span class="brand-dot"></span>
+        <div class="brand-mark">ZERONE</div>
+      </a>
+      <nav class="topnav">
+        <a href="#instructions">Instructions</a>
+        <a href="#flash">Flash</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="site-shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">RHYTHM • FIRMWARE UPDATE</p>
+        <h1>Flash new firmware from your browser.</h1>
+        <p>
+          This page is intended to make RHYTHM firmware updates simple. Choose a firmware version, connect the device,
+          and flash it through the external USB DFU path.
+        </p>
+        <div class="notice">
+          This version now uses the real Daisy JavaScript DFU stack, adapted for RHYTHM firmware binaries.
+        </div>
+      </div>
+      <div class="content-section">
+        <p class="section-tag">STATUS</p>
+        <h2>Browser-based updater</h2>
+        <p>
+          Hosted as a static site. Intended to work from GitHub Pages. Uses browser USB access and Daisy's DFU/DfuSe
+          JavaScript stack for firmware-only updates.
+        </p>
+      </div>
+    </section>
+
+    <section id="instructions" class="content-section">
+      <p class="section-tag">INSTRUCTIONS</p>
+      <h2>Before you flash</h2>
+      <div class="grid-2">
+        <div>
+          <ol class="list-tight">
+            <li>Connect RHYTHM to your computer using the external USB port.</li>
+            <li>Put RHYTHM into the external USB DFU bootloader mode.</li>
+            <li>Select the firmware version you want to install.</li>
+            <li>Click <strong>Flash Firmware</strong>.</li>
+            <li>Approve the browser USB device prompt if it appears.</li>
+            <li>Wait for the flash process to complete before unplugging the device.</li>
+          </ol>
+        </div>
+        <div>
+          <ul class="list-tight">
+            <li>Use a Chromium-based browser with WebUSB support.</li>
+            <li>Do not disconnect power or USB while flashing.</li>
+            <li>Only flash firmware files intended for RHYTHM.</li>
+            <li>If flashing fails, power-cycle the device and retry.</li>
+          </ul>
+          <div class="notice">
+            This page assumes RHYTHM presents the same DFU USB identity and write behavior as Daisy Seed.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="flash" class="content-section">
+      <p class="section-tag">FLASH</p>
+      <h2>Select a version and start the update</h2>
+      <div class="grid-2">
+        <div class="controls">
+          <div>
+            <label for="firmware-select">Firmware Version</label>
+            <select id="firmware-select">
+              <option value="">Loading versions…</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button id="refresh-btn" class="button button-blue" type="button">Refresh Versions</button>
+            <button id="flash-btn" class="button button-primary" type="button">Flash Firmware</button>
+          </div>
+        </div>
+        <div>
+          <div id="status" class="status">Ready.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="./dfu.js"></script>
+  <script src="./dfuse.js"></script>
+  <script>
+    const firmwareSelect = document.getElementById('firmware-select');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const flashBtn = document.getElementById('flash-btn');
+    const statusEl = document.getElementById('status');
+
+    const DFU_DEVICE_FILTERS = [
+      { vendorId: 0x0483 }
+    ];
+
+    let currentDevice = null;
+    let manifestationTolerant = true;
+    let transferSize = 1024;
+
+    function setStatus(message) {
+      statusEl.textContent = message;
+    }
+
+    function clearStatusLog() {
+      statusEl.innerHTML = '';
+    }
+
+    function appendStatus(message) {
+      const p = document.createElement('p');
+      p.textContent = message;
+      statusEl.appendChild(p);
+    }
+
+    function logProgress(done, total) {
+      let progressBar = statusEl.querySelector('progress');
+      if (!progressBar) {
+        progressBar = document.createElement('progress');
+        statusEl.appendChild(progressBar);
+      }
+      progressBar.value = done;
+      if (typeof total !== 'undefined') {
+        progressBar.max = total;
+      }
+    }
+
+    function hex4(n) {
+      let s = n.toString(16);
+      while (s.length < 4) s = '0' + s;
+      return s;
+    }
+
+    function formatDFUSummary(device) {
+      const vid = hex4(device.device_.vendorId);
+      const pid = hex4(device.device_.productId);
+      const name = device.device_.productName;
+      let mode = 'Unknown';
+      if (device.settings.alternate.interfaceProtocol === 0x01) mode = 'Runtime';
+      else if (device.settings.alternate.interfaceProtocol === 0x02) mode = 'DFU';
+      const cfg = device.settings.configuration.configurationValue;
+      const intf = device.settings.interface.interfaceNumber;
+      const alt = device.settings.alternate.alternateSetting;
+      return `${mode}: [${vid}:${pid}] cfg=${cfg}, intf=${intf}, alt=${alt}, name="${name}"`;
+    }
+
+    async function loadFirmwareManifest() {
+      const res = await fetch('./manifest.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Manifest fetch failed: ${res.status}`);
+      const manifest = await res.json();
+      firmwareSelect.innerHTML = '';
+      if (!manifest.versions || !manifest.versions.length) {
+        firmwareSelect.innerHTML = '<option value="">No firmware versions available</option>';
+        setStatus('No firmware versions found in manifest.json');
+        return manifest;
+      }
+      for (const item of manifest.versions) {
+        const opt = document.createElement('option');
+        opt.value = item.file;
+        opt.textContent = item.label;
+        firmwareSelect.appendChild(opt);
+      }
+      setStatus(`Loaded ${manifest.versions.length} firmware version(s).`);
+      return manifest;
+    }
+
+    async function fetchFirmwareBinary(filename) {
+      const res = await fetch(`./binaries/${filename}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Firmware fetch failed: ${res.status} ${res.statusText}`);
+      return await res.arrayBuffer();
+    }
+
+    async function getDFUDescriptorProperties(device) {
+      return device.readConfigurationDescriptor(0).then(data => {
+        const configDesc = dfu.parseConfigurationDescriptor(data);
+        let funcDesc = null;
+        const configValue = device.settings.configuration.configurationValue;
+        if (configDesc.bConfigurationValue === configValue) {
+          for (const desc of configDesc.descriptors) {
+            if (desc.bDescriptorType === 0x21 && Object.prototype.hasOwnProperty.call(desc, 'bcdDFUVersion')) {
+              funcDesc = desc;
+              break;
+            }
+          }
+        }
+        if (!funcDesc) return {};
+        return {
+          WillDetach: ((funcDesc.bmAttributes & 0x08) !== 0),
+          ManifestationTolerant: ((funcDesc.bmAttributes & 0x04) !== 0),
+          CanUpload: ((funcDesc.bmAttributes & 0x02) !== 0),
+          CanDnload: ((funcDesc.bmAttributes & 0x01) !== 0),
+          TransferSize: funcDesc.wTransferSize,
+          DetachTimeOut: funcDesc.wDetachTimeOut,
+          DFUVersion: funcDesc.bcdDFUVersion
+        };
+      }, () => ({}));
+    }
+
+    async function fixInterfaceNames(device_, interfaces) {
+      if (interfaces.some(intf => intf.name == null)) {
+        const tempDevice = new dfu.Device(device_, interfaces[0]);
+        await tempDevice.device_.open();
+        await tempDevice.device_.selectConfiguration(1);
+        const mapping = await tempDevice.readInterfaceNames();
+        await tempDevice.close();
+        for (const intf of interfaces) {
+          if (intf.name === null) {
+            const configIndex = intf.configuration.configurationValue;
+            const intfNumber = intf.interface.interfaceNumber;
+            const alt = intf.alternate.alternateSetting;
+            intf.name = mapping[configIndex][intfNumber][alt];
+          }
+        }
+      }
+    }
+
+    async function connectToDfuDevice(selectedDevice) {
+      let interfaces = dfu.findDeviceDfuInterfaces(selectedDevice);
+      if (!interfaces.length) {
+        throw new Error('The selected device does not have any USB DFU interfaces.');
+      }
+
+      await fixInterfaceNames(selectedDevice, interfaces);
+
+      if (interfaces.length > 1) {
+        const flashInterfaces = interfaces.filter(ifc => ifc.name && ifc.name.includes('0x08000000'));
+        if (flashInterfaces.length) {
+          interfaces = flashInterfaces;
+        }
+      }
+
+      let device = new dfu.Device(selectedDevice, interfaces[0]);
+      await device.open();
+
+      const desc = await getDFUDescriptorProperties(device);
+      if (desc && Object.keys(desc).length) {
+        device.properties = desc;
+        if (desc.TransferSize) transferSize = desc.TransferSize;
+        manifestationTolerant = !!desc.ManifestationTolerant;
+      }
+
+      if (desc.DFUVersion === 0x011a && device.settings.alternate.interfaceProtocol === 0x02) {
+        device = new dfuse.Device(device.device_, device.settings);
+        device.logDebug = console.log;
+      }
+
+      device.logDebug = console.log;
+      device.logInfo = appendStatus;
+      device.logWarning = appendStatus;
+      device.logError = appendStatus;
+      device.logProgress = logProgress;
+
+      return device;
+    }
+
+    async function requestUsbDevice() {
+      if (!('usb' in navigator)) {
+        throw new Error('This browser does not support WebUSB. Use a Chromium-based browser.');
+      }
+      return await navigator.usb.requestDevice({ filters: DFU_DEVICE_FILTERS });
+    }
+
+    async function flashSelectedFirmware() {
+      const filename = firmwareSelect.value;
+      if (!filename) {
+        setStatus('Choose a firmware version first.');
+        return;
+      }
+
+      clearStatusLog();
+      appendStatus(`Loading firmware binary: ${filename}`);
+      const firmware = await fetchFirmwareBinary(filename);
+      appendStatus(`Loaded ${filename} (${firmware.byteLength} bytes)`);
+      appendStatus('Requesting USB device…');
+
+      const selectedDevice = await requestUsbDevice();
+      currentDevice = await connectToDfuDevice(selectedDevice);
+
+      appendStatus(`Connected: ${formatDFUSummary(currentDevice)}`);
+      appendStatus(`Transfer size: ${transferSize}`);
+      appendStatus('Checking device status…');
+
+      try {
+        const status = await currentDevice.getStatus();
+        if (status.state === dfu.dfuERROR) {
+          appendStatus('Device reported DFU error state. Clearing status…');
+          await currentDevice.clearStatus();
+        }
+      } catch (error) {
+        appendStatus(`Warning: failed to clear status: ${error}`);
+      }
+
+      appendStatus('Starting download…');
+      await currentDevice.do_download(transferSize, firmware, manifestationTolerant);
+      appendStatus('Done!');
+
+      if (!manifestationTolerant) {
+        appendStatus('Waiting for device reset/disconnect…');
+        try {
+          await currentDevice.waitDisconnected(5000);
+          appendStatus('Device disconnected after manifestation.');
+        } catch (error) {
+          appendStatus('Device did not disconnect automatically after flash.');
+        }
+      }
+    }
+
+    refreshBtn.addEventListener('click', () => {
+      loadFirmwareManifest().catch(err => setStatus(`Error loading manifest: ${err.message}`));
+    });
+
+    flashBtn.addEventListener('click', () => {
+      flashSelectedFirmware().catch(err => {
+        appendStatus(`Flash failed: ${err.message || err}`);
+      });
+    });
+
+    loadFirmwareManifest().catch(err => setStatus(`Error loading manifest: ${err.message}`));
+  </script>
+</body>
+</html>
