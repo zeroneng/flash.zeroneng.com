@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RHYTHM Firmware Flash</title>
-  <meta name="description" content="Flash RHYTHM firmware from your browser.">
+  <title>RHYTHM Firmware and Samples</title>
+  <meta name="description" content="Flash RHYTHM firmware from your browser. Download SD Card Image.">
   <style>
     :root {
       --bg: #050505;
@@ -24,6 +24,24 @@
       --topbar-bg: rgba(5, 5, 5, 0.7);
       --card-bg: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.025));
       --card-soft-bg: rgba(255, 255, 255, 0.03);
+    }
+
+    body[data-theme="light"] {
+      --bg: #f5f7fb;
+      --bg-soft: #eef3f8;
+      --panel: rgba(10, 24, 48, 0.04);
+      --panel-strong: rgba(10, 24, 48, 0.07);
+      --text: #0f1726;
+      --copy: rgba(15, 23, 38, 0.9);
+      --line: rgba(15, 23, 38, 0.12);
+      --shadow: 0 24px 60px rgba(12, 24, 42, 0.12);
+      --bg-gradient:
+        radial-gradient(circle at 10% 0%, rgba(36, 200, 255, 0.08), transparent 30%),
+        radial-gradient(circle at 100% 0%, rgba(255, 46, 166, 0.08), transparent 28%),
+        linear-gradient(180deg, #fbfcfe 0%, #eef3f8 100%);
+      --topbar-bg: rgba(245, 247, 251, 0.82);
+      --card-bg: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(247,250,253,0.92));
+      --card-soft-bg: rgba(255, 255, 255, 0.75);
     }
 
     * { box-sizing: border-box; }
@@ -277,7 +295,9 @@
     }
   </style>
 </head>
-<body>
+<!-- Uncomment/toggle Body tag for dark mode: -->
+<!-- <body -->
+<body data-theme="light">
   <div class="topbar">
     <div class="topbar-inner">
       <a class="brand-lockup" href="https://zeroneng.com">
@@ -287,6 +307,7 @@
       <nav class="topnav">
         <a href="#instructions">Instructions</a>
         <a href="#flash">Flash</a>
+        <a href="#sdcard">SD Card Image</a>
       </nav>
     </div>
   </div>
@@ -348,6 +369,19 @@
         <p id="firmware-description">Select a firmware version to view its notes.</p>
       </div>
     </section>
+
+    <section id="sdcard" class="content-section">
+      <p class="section-tag">SD CARD</p>
+      <h2>Download the SD Card image</h2>
+      <p>
+        Use these files if you need to prepare or restore the RHYTHM SD card contents.
+      </p>
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;">
+        <a class="button button-blue" href="./rhythm.img">rhythm.img</a>
+        <a class="button button-blue" href="./rhythm.zip">rhythm.zip</a>
+      </div>
+    </section>
+
   </div>
 
   <script src="./dfu.js"></script>
