@@ -1,10 +1,16 @@
 {
   "versions": [
     {
+      "label": "rhythm-v0.8.288.bin",
+      "file": "rhythm-v0.8.288.bin",
+      "sha256": "",
+      "description": "Added HID Support"
+    },
+    {
       "label": "rhythm-v0.0.1.bin",
       "file": "rhythm-v0.0.1.bin",
       "sha256": "",
-      "description": "Initial public firmware release."
+      "description": "Initial firmware release."
     }
   ]
 }
