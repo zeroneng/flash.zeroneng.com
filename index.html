@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RHYTHM Firmware and Samples</title>
-  <meta name="description" content="Flash RHYTHM firmware from your browser. Download SD Card Image.">
+  <meta name="description" content="Flash RHYTHM firmware from a Chromium-based browser and download SD card files.">
   <style>
     :root {
       --bg: #050505;
@@ -308,7 +308,7 @@
       <nav class="topnav">
         <a href="#instructions">Instructions</a>
         <a href="#flash">Flash</a>
-        <a href="#sdcard">SD Card Image</a>
+        <a href="#sdcard">SD Card Files</a>
       </nav>
     </div>
   </div>
@@ -317,7 +317,7 @@
     <section class="hero">
       <div>
         <p class="eyebrow">RHYTHM • FIRMWARE UPDATE</p>
-        <h1>Firmware Updater and SD Card Image</h1>
+        <h1>Firmware and SD Card Files</h1>
       </div>
     </section>
 
@@ -327,12 +327,12 @@
       <div class="grid-2">
         <div>
           <ol class="list-tight">
-            <li>Connect RHYTHM to your computer using the USB port.</li>
-            <li>Put RHYTHM into Flash Mode in the Settings menu.</li>
+            <li>Connect RHYTHM to your computer using USB.</li>
+            <li>Put RHYTHM into Flash Mode from the Settings menu.</li>
             <li>Select the firmware version you want to install.</li>
             <li>Click <strong>Flash Firmware</strong>.</li>
             <li>Approve the browser USB device prompt if it appears.</li>
-            <li>Wait for the flash process to complete before unplugging the device.</li>
+            <li>Wait for flashing to complete before unplugging the device.</li>
           </ol>
         </div>
         <div>
@@ -340,7 +340,7 @@
             <li>Use a Chromium-based browser with WebUSB support.</li>
             <li>Do not disconnect power or USB while flashing.</li>
             <li>Only flash firmware files intended for RHYTHM.</li>
-            <li>If flashing fails, power-cycle the device and retry.</li>
+            <li>If flashing fails, power-cycle RHYTHM and retry.</li>
           </ul>
         </div>
       </div>
@@ -373,14 +373,10 @@
 
     <section id="sdcard" class="content-section">
       <p class="section-tag">SD CARD</p>
-      <h2>Download the SD Card image</h2>
+      <h2>Download the SD card files</h2>
       <p>
-        Use these files if you need to prepare or restore the RHYTHM SD card contents.
+        SD card image downloads will be posted here when the release package is ready.
       </p>
-      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;">
-        <a class="button button-blue" href="./rhythm.img">rhythm.img</a>
-        <a class="button button-blue" href="./rhythm.zip">rhythm.zip</a>
-      </div>
     </section>
 
   </div>
@@ -399,7 +395,6 @@
       { vendorId: 0x0483 }
     ];
 
-    let currentDevice = null;
     let manifestationTolerant = true;
     let transferSize = 1024;
 
@@ -430,9 +425,7 @@
     }
 
     function hex4(n) {
-      let s = n.toString(16);
-      while (s.length < 4) s = '0' + s;
-      return s;
+      return n.toString(16).padStart(4, '0');
     }
 
     function formatDFUSummary(device) {
@@ -445,7 +438,7 @@
       const cfg = device.settings.configuration.configurationValue;
       const intf = device.settings.interface.interfaceNumber;
       const alt = device.settings.alternate.alternateSetting;
-      return `${mode}: [${vid}:${pid}] cfg=${cfg}, intf=${intf}, alt=${alt}, name="${name}"`;
+      return `${mode}: [${vid}:${pid}] cfg=${cfg}, interface=${intf}, alt=${alt}, name="${name}"`;
     }
 
     function updateFirmwareDescription() {
@@ -591,7 +584,7 @@
     async function flashSelectedFirmware() {
       const filename = firmwareSelect.value;
       if (!filename) {
-        setStatus('Choose a firmware version first.');
+        setStatus('Select a firmware version first.');
         return;
       }
 
@@ -602,7 +595,7 @@
       appendStatus('Requesting USB device…');
 
       const selectedDevice = await requestUsbDevice();
-      currentDevice = await connectToDfuDevice(selectedDevice);
+      const currentDevice = await connectToDfuDevice(selectedDevice);
 
       appendStatus(`Connected: ${formatDFUSummary(currentDevice)}`);
       appendStatus(`Transfer size: ${transferSize}`);
@@ -618,9 +611,9 @@
         appendStatus(`Warning: failed to clear status: ${error}`);
       }
 
-      appendStatus('Starting download…');
+      appendStatus('Starting firmware download…');
       await currentDevice.do_download(transferSize, firmware, manifestationTolerant);
-      appendStatus('Done!');
+      appendStatus('Firmware update complete.');
 
       if (!manifestationTolerant) {
         appendStatus('Waiting for device reset/disconnect…');
@@ -633,9 +626,7 @@
       }
     }
 
-    firmwareSelect.addEventListener('change', () => {
-      updateFirmwareDescription();
-    });
+    firmwareSelect.addEventListener('change', updateFirmwareDescription);
 
     flashBtn.addEventListener('click', () => {
       flashSelectedFirmware().catch(err => {
@@ -643,7 +634,7 @@
       });
     });
 
-    loadFirmwareManifest().catch(err => setStatus(`Error loading manifest: ${err.message}\nUse Chrome Browser for best compatibility.`));
+    loadFirmwareManifest().catch(err => setStatus(`Error loading manifest: ${err.message}\nUse a Chromium-based browser for best compatibility.`));
   </script>
 </body>
 </html>
