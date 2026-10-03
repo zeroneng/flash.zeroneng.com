@@ -1,13 +1,13 @@
 {
   "versions": [
     {
-      "label": "rhythm-v0.8.288.bin",
+      "label": "GRID v0.8.288",
       "file": "rhythm-v0.8.288.bin",
       "sha256": "",
       "description": "Added HID Support"
     },
     {
-      "label": "rhythm-v0.0.1.bin",
+      "label": "GRID v0.0.1",
       "file": "rhythm-v0.0.1.bin",
       "sha256": "",
       "description": "Initial firmware release."
