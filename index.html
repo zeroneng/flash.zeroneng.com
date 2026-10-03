@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GRID Firmware and Samples</title>
   <meta name="description" content="Flash GRID firmware from a Chromium-based browser and download SD card files.">
+  <link rel="canonical" href="https://flash.zeroneng.com/">
   <style>
     :root {
       --bg: #050505;
@@ -358,11 +359,11 @@
             </select>
           </div>
           <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <button id="flash-btn" class="button button-primary" type="button">Flash Firmware</button>
+            <button id="flash-btn" class="button button-primary" type="button" disabled>Flash Firmware</button>
           </div>
         </div>
         <div>
-          <div id="status" class="status">Ready.</div>
+          <div id="status" class="status" role="status" aria-live="polite">Loading firmware versions…</div>
         </div>
       </div>
       <div class="firmware-notes">
@@ -474,6 +475,7 @@
         firmwareSelect.appendChild(opt);
       }
       updateFirmwareDescription();
+      flashBtn.disabled = false;
       setStatus(`Loaded ${manifest.versions.length} firmware version(s).`);
       return manifest;
     }
@@ -529,6 +531,8 @@
     }
 
     async function connectToDfuDevice(selectedDevice) {
+      manifestationTolerant = true;
+      transferSize = 1024;
       let interfaces = dfu.findDeviceDfuInterfaces(selectedDevice);
       if (!interfaces.length) {
         throw new Error('The selected device does not have any USB DFU interfaces.');
@@ -632,10 +636,15 @@
 
     firmwareSelect.addEventListener('change', updateFirmwareDescription);
 
-    flashBtn.addEventListener('click', () => {
-      flashSelectedFirmware().catch(err => {
+    flashBtn.addEventListener('click', async () => {
+      flashBtn.disabled = true;
+      try {
+        await flashSelectedFirmware();
+      } catch (err) {
         appendStatus(`Flash failed: ${err.message || err}`);
-      });
+      } finally {
+        flashBtn.disabled = false;
+      }
     });
 
     loadFirmwareManifest().catch(err => setStatus(`Error loading manifest: ${err.message}\nUse a Chromium-based browser for best compatibility.`));
